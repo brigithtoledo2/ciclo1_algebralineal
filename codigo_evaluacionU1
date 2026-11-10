@@ -1,0 +1,78 @@
+import numpy as np
+
+# Crear tablero de 3x3
+tablero = np.zeros((3, 3), dtype=int)
+
+# Mostrar tablero
+def mostrar_tablero():
+    simbolos = {0: " ", 1: "X", -1: "O"}
+
+    for fila in tablero:
+        print(" | ".join(simbolos[x] for x in fila))
+        print("---------")
+
+# Comprobar ganador
+def comprobar_ganador():
+    # Sumar filas y columnas
+    for i in range(3):
+        suma_fila = np.sum(tablero[i, :])
+        if abs(suma_fila) == 3:
+            return 1 if suma_fila == 3 else -1
+
+        suma_col = np.sum(tablero[:, i])
+        if abs(suma_col) == 3:
+            return 1 if suma_col == 3 else -1
+
+    # Comprobar diagonales
+    d1 = np.trace(tablero)
+    if abs(d1) == 3:
+        return 1 if d1 == 3 else -1
+
+    d2 = np.trace(np.fliplr(tablero))
+    if abs(d2) == 3:
+        return 1 if d2 == 3 else -1
+
+    return 0
+
+# Juego principal
+print("===================================")
+print(" ¡Bienvenido al juego de Tres en Raya! ")
+print("===================================")
+
+jugador = 1
+
+while True:
+    mostrar_tablero()
+
+    print("Turno del jugador:",
+          "X" if jugador == 1 else "O")
+
+    fila = int(input("Fila (1-3): ")) - 1
+    columna = int(input("Columna (1-3): ")) - 1
+
+    if not (0 <= fila < 3 and 0 <= columna < 3):
+        print("Posición fuera del tablero.")
+        continue
+
+    if tablero[fila, columna] != 0:
+        print("Casilla ocupada. Intente nuevamente.")
+        continue
+
+    # Registrar jugada
+    tablero[fila, columna] = jugador
+
+    ganador = comprobar_ganador()
+
+    if ganador != 0:
+        mostrar_tablero()
+        print("Ganador:",
+              "X" if ganador == 1 else "O")
+        break
+
+    if np.all(tablero != 0):
+        mostrar_tablero()
+        print("Empate. No hay ganador.")
+        break
+
+    # Cambiar jugador
+    jugador *= -1
